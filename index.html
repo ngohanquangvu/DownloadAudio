@@ -3,7 +3,7 @@ def exam_info(url):
         try:
             a = s.get(url).text
             b = bs4.BeautifulSoup(a, "html.parser")
-            if "engexaminfo" in url or "english-practice.net" in url:
+            if "engexam.info" in url or "english-practice.net" in url:
                 c = b.find_all("source", type="audio/mpeg")
                 for i in range(len(c)):
                     print(c[i]["src"])
