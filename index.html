@@ -1,0 +1,42 @@
+def exam_info(url):
+        s = cloudscraper.create_scraper()
+        try:
+            a = s.get(url).text
+            b = bs4.BeautifulSoup(a, "html.parser")
+            if "engexaminfo" in url or "english-practice.net" in url:
+                c = b.find_all("source", type="audio/mpeg")
+                for i in range(len(c)):
+                    print(c[i]["src"])
+                    with open(f"{c[i]["src"].split('/')[-1].split("?")[0]}", "wb") as f:
+                        f.write(requests.get(c[i]["src"]).content)
+                    print(f'File downloaded successfully in {c[i]["src"].split('/')[-1].split("?")[0]}')
+            elif "examenglish" in url:
+                c = b.find_all("div", {"data-type":"audio/mpeg"})
+                for i in range(len(c)):
+                    with open(f"{c[i]["data-src"].split('/')[-1].split("?")[0]}", "wb") as f:
+                        f.write(requests.get(c[i]["data-src"]).content)
+                    print(f'File downloaded successfully in {c[i]["data-src"].split('/')[-1].split("?")[0]}')
+            elif "study4.com" in url:
+                h = {"cookie":"_ym_uid=1702890001137618351; _gid=GA1.2.776702990.1724144218; _fbc=fb.1.1724144218340.IwZXh0bgNhZW0CMTEAAR2mQlYVZnq_V7pyjOkMeqShOeaYBNkZbwdRs-AO-4Jad9vk7jew8tk3Cu0_aem_8flabc4Z5Z0k3pXpz4ANIA; _fbp=fb.1.1724144218347.171668127898647676; __zi=3000.SSZzejyD2ye-ZlVYX0eTapB1kl_A10NGRjEmuDX65yPzagUdbKOIYZIOfQMPJbo8Ev7Wf9z6Kuuza-MZ.1; cf_clearance=M9Vc90t_4zdkRzLeI4xkPfHxYPu72KTWUBt4oR3qNaw-1724144218-1.2.1.1-kBR9LwsSq3t_xQGVznMSaSnnVMULR3IG0LlLS.PCXradOgC2NaW_BPpPfckQU8sZfVK.gcyImnovK_3uadw7B8FVyZWO8PtVLTiR2vnyD04jZ9dYOWficIaqzkJIUkUx2BWKpfylTn4F6DEwg369KhUvrMtkh0zKnLZXHoxWRm06a5rx23zBVJIw_T0QilZlpkISrMJlBLvxldRSFbK8E7EwuhD6Tn81nPJxsaNWhl3BZsCoMr5ecR3EPj_LKpsxNSup7ovRuznTTUj4A5zLeFMWCuzNMnAmHAaSJ2y2K_2MsVxt9HALtrQICkrbs839lMLYFlkDBAtPXL0NDlV.8S2K2pW8Q6t0nPcx8JTDxqcby7j23QaZneeO6SCdG0.eZdumhPGknMgGtIHYLzvovQ; _tt_enable_cookie=1; _ttp=CfFbVqccWxFNi6vUrfdP3G8bDGD; _ym_d=1724144220; _ym_isad=2; csrftoken=GGnhxX1FhOFTAQHbai1EAlIHwP4Koc58XSrYrhQj5UHtdIZpkBtHl8yE6MtsphFz; sessionid=5rv5w9kszxgbldt57tqnp08rhl3839tp; _gat_gtag_UA_147622171_7=1; _ga=GA1.1.1159359877.1724144218; _ga_64Z8KN7V8D=GS1.1.1724144218.1.1.1724144465.0.0.0"}
+                a = requests.get(url).text
+                b = bs4.BeautifulSoup(a, "html.parser")
+                c = b.find_all("input", {"type":"checkbox"})
+                param = "?"
+                for i in c:
+                    param = param+f"part={i['value']}&"
+                url = "/".join(url.split("/")[0:-2])+"/practice/"+param
+                a = requests.get(url, headers=h).text
+                b = bs4.BeautifulSoup(a, "html.parser")
+                c = b.find_all("source")
+                for i in c:
+                    url = "https://study4.com"+i["src"]
+                    with open(f"{i['src'].split('/')[-1].split('?')[0]}", "wb") as f:
+                        f.write(requests.get(url).content)
+                    print(f'File downloaded successfully in {i["src"].split('/')[-1].split("?")[0]}')
+        except Exception as e:
+            print(f"{url} is not supported")
+            pass
+while True:
+    url = input("Enter the URL: ")
+    exam_info(url)
+    print("")
