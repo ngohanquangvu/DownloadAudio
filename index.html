@@ -6,7 +6,6 @@ def exam_info(url):
             if "engexam.info" in url or "english-practice.net" in url:
                 c = b.find_all("source", type="audio/mpeg")
                 for i in range(len(c)):
-                    print(c[i]["src"])
                     with open(f"{c[i]["src"].split('/')[-1].split("?")[0]}", "wb") as f:
                         f.write(requests.get(c[i]["src"]).content)
                     print(f'File downloaded successfully in {c[i]["src"].split('/')[-1].split("?")[0]}')
